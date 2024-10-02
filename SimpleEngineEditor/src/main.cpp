@@ -14,8 +14,6 @@ class MyApp : public SimpleEngine::Application
 };
 
 
-// переделать под свой стиль и залить на гитхаб
-
 int main()
 {
     auto myApp = std::make_unique<MyApp>();

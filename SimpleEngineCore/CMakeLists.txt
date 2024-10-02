@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.3)
 
 set(ENGINE_PROJECT_NAME SimpleEngineCore)
 
@@ -24,3 +24,6 @@ target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE glfw)
 
 add_subdirectory(../external/spdlog ${CMAKE_CURRENT_BINARY_DIR}/spdlog)
 target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE spdlog)
+
+add_subdirectory(../external/glad ${CMAKE_CURRENT_BINARY_DIR}/glad)
+target_link_libraries(${ENGINE_PROJECT_NAME} PRIVATE glad)
