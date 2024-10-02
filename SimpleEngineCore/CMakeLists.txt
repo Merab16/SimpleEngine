@@ -5,6 +5,7 @@ set(ENGINE_PROJECT_NAME SimpleEngineCore)
 set(ENGINE_PUBLIC_INCLUDES
 	includes/SimpleEngineCore/Application.h
 	includes/SimpleEngineCore/Log.h
+	includes/SimpleEngineCore/Event.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -14,6 +15,7 @@ set(ENGINE_PRIVATE_INCLUDES
 set(ENGINE_PRIVATE_SOURCES
 	src/SimpleEngineCore/Application.cpp
 	src/SimpleEngineCore/Window.cpp
+	src/SimpleEngineCore/Event.cpp
 )
 
 add_library(${ENGINE_PROJECT_NAME} STATIC

@@ -10,9 +10,7 @@ namespace SimpleEngine {
 
 	// constr & destr
 	Window::Window(unsigned int width, unsigned int height, const std::string& title)
-		: width_(width)
-		, height_(height)
-		, title_(title)
+		: data_({width, height, title})
 	{
 		
 		int res = Init();
@@ -34,7 +32,8 @@ namespace SimpleEngine {
 
 	// private
 	int Window::Init() {
-        LOG_INFO("Creating window {0} with size {1}x{2}", title_, width_, height_);
+        LOG_INFO("Creating window {0} with size {1}x{2}",
+            data_.title, data_.width, data_.height);
 
         if (!isGLFWinitialized) {
             if (!glfwInit()) {
@@ -43,11 +42,12 @@ namespace SimpleEngine {
             }
         }
             
-        window_ = glfwCreateWindow(width_, height_, title_.c_str(), nullptr, nullptr);
+        window_ = glfwCreateWindow(data_.width, data_.height, data_.title.c_str(),
+            nullptr, nullptr);
         
         if (!window_)
         {
-            LOG_CRITICAL("Can't create window {0}", title_);
+            LOG_CRITICAL("Can't create window {0}", data_.title);
             glfwTerminate();
             return -2;
         }
@@ -60,6 +60,29 @@ namespace SimpleEngine {
             LOG_CRITICAL("Failed to initialize GLAD");
             return -3;
         }
+
+        // устанавливаем пользовательские данные, для использования вне window
+        glfwSetWindowUserPointer(window_, &data_);
+
+        glfwSetWindowSizeCallback(window_, 
+            [](GLFWwindow* window, int width, int height) {   
+                // кастим (void*) -> (WindowData*), и мы можем использовать 
+                // пользовательские данные вне window
+                WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+                
+                // обновляем данные
+                data.width = width;
+                data.height = height;
+
+                // заполняем event для того чтобы передать в собственный callback
+                Event event;
+                event.width = width;
+                event.height = height;
+
+                data.eventCallbackFn(event);
+            }
+        );
+
 
         return 0;
 	}

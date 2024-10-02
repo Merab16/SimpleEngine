@@ -21,6 +21,13 @@ namespace SimpleEngine {
 
     int Application::Start(unsigned int window_width, unsigned int window_height, const char* title) {
         window_ = std::make_unique<Window>(window_width, window_height, title);
+        window_->SetEventCallback([](Event& event) {
+
+            LOG_INFO("[EVENT] Changed size to {0}x{1}", event.width, event.height);
+
+            }
+        );
+
 
         while (1) {
             window_->OnUpdate();
