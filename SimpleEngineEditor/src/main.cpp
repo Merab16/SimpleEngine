@@ -1,7 +1,7 @@
 #include <iostream>
 #include <memory>
 
-#include <SimpleEngineCore/Application.hpp>
+#include <SimpleEngineCore/Application.h>
 
 class MyApp : public SimpleEngine::Application
 {

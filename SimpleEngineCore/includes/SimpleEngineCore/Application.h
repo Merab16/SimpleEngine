@@ -1,9 +1,18 @@
 #pragma once
+#include <memory>
+
 
 namespace SimpleEngine {
 
-    class Application
-    {
+    class Application {
+    private:
+        std::unique_ptr<class Window> window_;
+
+
+    private:
+
+
+
     public:
         Application();
         virtual ~Application();
