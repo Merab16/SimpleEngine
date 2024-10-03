@@ -75,12 +75,33 @@ namespace SimpleEngine {
                 data.height = height;
 
                 // заполняем event для того чтобы передать в собственный callback
-                Event event;
-                event.width = width;
-                event.height = height;
-
+                EventWindowResize event(width, height);
                 data.eventCallbackFn(event);
             }
+        );
+
+        glfwSetCursorPosCallback(window_,
+            [](GLFWwindow* window, double x, double y) {
+                // кастим (void*) -> (WindowData*), и мы можем использовать 
+                // пользовательские данные вне window
+                WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+
+                // заполняем event для того чтобы передать в собственный callback
+                EventMouseMoved event(x, y);
+                data.eventCallbackFn(event);
+            }
+        );
+
+        glfwSetWindowCloseCallback(window_,
+            [](GLFWwindow* window) {
+                // кастим (void*) -> (WindowData*), и мы можем использовать 
+                // пользовательские данные вне window
+                WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+
+                // заполняем event для того чтобы передать в собственный callback
+                EventWindowClose event;
+                data.eventCallbackFn(event);
+            }        
         );
 
 

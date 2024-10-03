@@ -11,7 +11,7 @@ namespace SimpleEngine {
 
     class Window {
     public:
-        using EventCallbackFn = std::function<void(Event&)>;
+        using EventCallbackFn = std::function<void(BaseEvent&)>;
         
     private:
         struct WindowData {
@@ -20,7 +20,7 @@ namespace SimpleEngine {
             std::string title;
             EventCallbackFn eventCallbackFn;
         };
-
+                                            
     private:
         GLFWwindow* window_ = nullptr;
         WindowData data_;

@@ -1,13 +1,18 @@
 #pragma once
 #include <memory>
 
+#include <SimpleEngineCore/Event.h>
+
+
 
 namespace SimpleEngine {
 
     class Application {
     private:
         std::unique_ptr<class Window> window_;
+        EventDispatcher eventDispatcher_;
 
+        bool isCloseWindow_ = false;
 
     private:
 
