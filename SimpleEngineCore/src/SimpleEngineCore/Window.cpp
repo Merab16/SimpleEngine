@@ -1,6 +1,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <imgui/imgui.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
+
 #include "SimpleEngineCore/Window.h"
 #include "SimpleEngineCore/Log.h"
 
@@ -15,6 +18,9 @@ namespace SimpleEngine {
 		
 		int res = Init();
 
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGui_ImplOpenGL3_Init();
 		
 	}
 	Window::~Window() {
@@ -25,6 +31,20 @@ namespace SimpleEngine {
     void Window::OnUpdate() {
         glClearColor(0, 0.5, 0.5, 0);  
         glClear(GL_COLOR_BUFFER_BIT);
+
+        ImGuiIO& io = ImGui::GetIO();
+        io.DisplaySize.x = data_.width;
+        io.DisplaySize.y = data_.height;
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::ShowDemoWindow();
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
 
         glfwSwapBuffers(window_);
         glfwPollEvents();
