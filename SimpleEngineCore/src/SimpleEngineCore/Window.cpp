@@ -3,6 +3,7 @@
 
 #include <imgui/imgui.h>
 #include <imgui/backends/imgui_impl_opengl3.h>
+#include <imgui/backends/imgui_impl_glfw.h>
 
 #include "SimpleEngineCore/Window.h"
 #include "SimpleEngineCore/Log.h"
@@ -10,6 +11,39 @@
 
 namespace SimpleEngine {
     static bool isGLFWinitialized = false;
+
+    GLfloat points[]{
+        0.f, 0.5f, 0.f,
+        0.5f, -0.5f, 0.f,
+        -0.5f, -0.5f, 0.f
+    };
+
+    GLfloat colors[]{
+        1.f, 0.f, 0.f,
+        0.f, 1.f, 0.f,
+        0.f, 0.f, 1.f
+    };
+
+     const char* vertex_shader = 
+         "#version 450\n"
+         "layout(location = 0) in vec3 vertex_position;"
+         "layout(location = 1) in vec3 vertex_color;"
+         "out vec3 color;"
+         "void main() {"
+         "  color = vertex_color;"
+         "  gl_Position = vec4(vertex_position, 1.f);"
+         "}";
+     const char* fragment_shader =
+         "#version 460\n"
+         "in vec3 color;"
+         "out vec4 frag_color;"
+         "void main() {"
+         "  frag_color = vec4(color, 1.f);"
+         "}";
+
+     GLuint shader_program;
+     GLuint vao;
+
 
 	// constr & destr
 	Window::Window(unsigned int width, unsigned int height, const std::string& title)
@@ -21,7 +55,7 @@ namespace SimpleEngine {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGui_ImplOpenGL3_Init();
-		
+        ImGui_ImplGlfw_InitForOpenGL(window_, true);
 	}
 	Window::~Window() {
 		Shutdown();
@@ -29,17 +63,30 @@ namespace SimpleEngine {
 
 	// public
     void Window::OnUpdate() {
-        glClearColor(0, 0.5, 0.5, 0);  
+        glClearColor(backgroundColor_[0], backgroundColor_[1],
+            backgroundColor_[2], backgroundColor_[3]);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glUseProgram(shader_program);
+        glBindVertexArray(vao);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
 
         ImGuiIO& io = ImGui::GetIO();
         io.DisplaySize.x = data_.width;
         io.DisplaySize.y = data_.height;
 
         ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
         ImGui::ShowDemoWindow();
+
+        ImGui::Begin("Background Color Window");
+        ImGui::ColorEdit4("Background color", backgroundColor_);
+        ImGui::End();
+
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -123,6 +170,51 @@ namespace SimpleEngine {
                 data.eventCallbackFn(event);
             }        
         );
+
+        glfwSetFramebufferSizeCallback(window_,
+            [](GLFWwindow* window, int width, int height) {
+                glViewport(0, 0, width, height);
+            }
+        );
+       
+
+        GLuint vs = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vs, 1, &vertex_shader, nullptr);
+        glCompileShader(vs);
+
+        GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fs, 1, &fragment_shader, nullptr);
+        glCompileShader(fs);
+
+        shader_program = glCreateProgram();
+        glAttachShader(shader_program, vs);
+        glAttachShader(shader_program, fs);
+        glLinkProgram(shader_program);
+
+        glDeleteShader(vs);
+        glDeleteShader(fs);
+
+        GLuint points_vbo = 0;
+        glGenBuffers(1, &points_vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(points), &points, GL_STATIC_DRAW);
+
+        GLuint colors_vbo = 0;
+        glGenBuffers(1, &colors_vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(colors), &colors, GL_STATIC_DRAW);
+
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
+        
+        glEnableVertexAttribArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, points_vbo);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
+        glEnableVertexAttribArray(1);
+        glBindBuffer(GL_ARRAY_BUFFER, colors_vbo);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+
 
 
         return 0;
