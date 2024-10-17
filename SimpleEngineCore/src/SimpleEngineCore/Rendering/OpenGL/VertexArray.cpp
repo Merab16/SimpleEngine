@@ -48,9 +48,19 @@ namespace SimpleEngine {
 		Bind();
 		vertex_buffer.Bind();
 
-		glEnableVertexAttribArray(elementsCount_);
-		glVertexAttribPointer(elementsCount_, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-		++elementsCount_;
+		for (const BufferElement& current_element : vertex_buffer.GetLayout().GetElements()) {
+			glEnableVertexAttribArray(elementsCount_);
+			glVertexAttribPointer(
+				elementsCount_,
+				static_cast<GLint>(current_element.component_count),
+				current_element.component_type,
+				GL_FALSE,
+				static_cast<GLsizei>(vertex_buffer.GetLayout().GetStride()),
+				reinterpret_cast<const void*>(current_element.offset)
+			);
+			++elementsCount_;
+		}
+		
 	}
 
 

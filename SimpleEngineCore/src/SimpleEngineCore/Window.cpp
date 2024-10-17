@@ -27,6 +27,12 @@ namespace SimpleEngine {
         0.f, 0.f, 1.f
     };
 
+    GLfloat positions_and_colors[] = {
+         0.f, 0.5f, 0.f,    1.f, 0.f, 0.3f,
+        0.5f, -0.5f, 0.f,   0.8f, 1.f, 0.f,
+        -0.5f, -0.5f, 0.f,   0.f, 0.4f, 1.f
+    };
+
      const char* vertex_shader = 
          "#version 450\n"
          "layout(location = 0) in vec3 vertex_position;"
@@ -48,6 +54,9 @@ namespace SimpleEngine {
     std::unique_ptr<VertexBuffer> points_vbo;
     std::unique_ptr<VertexBuffer> colors_vbo;
     std::unique_ptr<VertexArray> vao;
+
+    std::unique_ptr<VertexBuffer> positions_and_colors_vbo;
+    std::unique_ptr<VertexArray> vao_one_buffer;
 
 	// constr & destr
 	Window::Window(unsigned int width, unsigned int height, const std::string& title)
@@ -71,9 +80,7 @@ namespace SimpleEngine {
             backgroundColor_[2], backgroundColor_[3]);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        shaderProgram->Bind();
-        vao->Bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        
 
 
 
@@ -89,6 +96,21 @@ namespace SimpleEngine {
 
         ImGui::Begin("Background Color Window");
         ImGui::ColorEdit4("Background color", backgroundColor_);
+
+        static bool use2buffers = false;
+        ImGui::Checkbox("2 Buffers", &use2buffers);
+        if (use2buffers) {
+            shaderProgram->Bind();
+            vao->Bind();
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+        }
+        else {
+            shaderProgram->Bind();
+            vao_one_buffer->Bind();
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+        }
+
+
         ImGui::End();
 
 
@@ -188,12 +210,30 @@ namespace SimpleEngine {
             return false;
         }
 
-        points_vbo = std::make_unique<VertexBuffer>(points, sizeof(points));
-        colors_vbo = std::make_unique<VertexBuffer>(colors, sizeof(colors));
+        BufferLayout buffer_layout_1vec3
+        {
+            ShaderDataType::Float3
+        };
+
+        points_vbo = std::make_unique<VertexBuffer>(points, sizeof(points), buffer_layout_1vec3);
+        colors_vbo = std::make_unique<VertexBuffer>(colors, sizeof(colors), buffer_layout_1vec3);
         vao = std::make_unique<VertexArray>();
 
         vao->AddBuffer(*points_vbo);
         vao->AddBuffer(*colors_vbo);
+
+        BufferLayout buffer_layout_2vec3
+        {
+            ShaderDataType::Float3,
+            ShaderDataType::Float3
+        };
+
+        vao_one_buffer = std::make_unique<VertexArray>();
+        positions_and_colors_vbo = std::make_unique<VertexBuffer>(positions_and_colors, sizeof(positions_and_colors), buffer_layout_2vec3);
+
+        vao_one_buffer->AddBuffer(*positions_and_colors_vbo);
+       
+
 
 
         return 0;
