@@ -11,13 +11,14 @@ set(ENGINE_PUBLIC_INCLUDES
 set(ENGINE_PRIVATE_INCLUDES
 	src/SimpleEngineCore/Window.h
 	src/SimpleEngineCore/Rendering/OpenGL/ShaderProgram.h
+	src/SimpleEngineCore/Rendering/OpenGL/VertexBuffer.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
 	src/SimpleEngineCore/Application.cpp
 	src/SimpleEngineCore/Window.cpp
 	src/SimpleEngineCore/Rendering/OpenGL/ShaderProgram.cpp
-
+	src/SimpleEngineCore/Rendering/OpenGL/VertexBuffer.cpp
 )
 
 set (ENGINE_ALL_SOURCES 
