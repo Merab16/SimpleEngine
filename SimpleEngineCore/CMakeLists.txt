@@ -12,6 +12,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	src/SimpleEngineCore/Window.h
 	src/SimpleEngineCore/Rendering/OpenGL/ShaderProgram.h
 	src/SimpleEngineCore/Rendering/OpenGL/VertexBuffer.h
+	src/SimpleEngineCore/Rendering/OpenGL/VertexArray.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -19,19 +20,22 @@ set(ENGINE_PRIVATE_SOURCES
 	src/SimpleEngineCore/Window.cpp
 	src/SimpleEngineCore/Rendering/OpenGL/ShaderProgram.cpp
 	src/SimpleEngineCore/Rendering/OpenGL/VertexBuffer.cpp
+	src/SimpleEngineCore/Rendering/OpenGL/VertexArray.cpp
 )
 
-set (ENGINE_ALL_SOURCES 
+set(ENGINE_ALL_SOURCES
 	${ENGINE_PUBLIC_INCLUDES}
 	${ENGINE_PRIVATE_INCLUDES}
-	${ENGINE_PRIVATE_SOURCES})
-
-add_library(${ENGINE_PROJECT_NAME} STATIC
 	${ENGINE_PRIVATE_SOURCES}
 )
 
+add_library(${ENGINE_PROJECT_NAME} STATIC
+	${ENGINE_ALL_SOURCES}
+)
+
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES
-	${ENGINE_ALL_SOURCES})
+	${ENGINE_ALL_SOURCES}
+)
 
 target_include_directories(${ENGINE_PROJECT_NAME} PUBLIC includes)
 target_include_directories(${ENGINE_PROJECT_NAME} PRIVATE src)
