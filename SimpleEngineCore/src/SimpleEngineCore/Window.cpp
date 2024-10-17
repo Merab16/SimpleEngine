@@ -7,6 +7,7 @@
 
 #include "SimpleEngineCore/Window.h"
 #include "SimpleEngineCore/Log.h"
+#include "SimpleEngineCore/Rendering/OpenGL/ShaderProgram.h"
 
 
 namespace SimpleEngine {
@@ -41,9 +42,8 @@ namespace SimpleEngine {
          "  frag_color = vec4(color, 1.f);"
          "}";
 
-     GLuint shader_program;
-     GLuint vao;
-
+    GLuint vao;
+    std::unique_ptr<ShaderProgram> shaderProgram;
 
 	// constr & destr
 	Window::Window(unsigned int width, unsigned int height, const std::string& title)
@@ -67,7 +67,7 @@ namespace SimpleEngine {
             backgroundColor_[2], backgroundColor_[3]);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shader_program);
+        shaderProgram->Bind();
         glBindVertexArray(vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -128,20 +128,20 @@ namespace SimpleEngine {
             return -3;
         }
 
-        // устанавливаем пользовательские данные, для использования вне window
+        // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ window
         glfwSetWindowUserPointer(window_, &data_);
 
         glfwSetWindowSizeCallback(window_, 
             [](GLFWwindow* window, int width, int height) {   
-                // кастим (void*) -> (WindowData*), и мы можем использовать 
-                // пользовательские данные вне window
+                // пїЅпїЅпїЅпїЅпїЅпїЅ (void*) -> (WindowData*), пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ window
                 WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
                 
-                // обновляем данные
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                 data.width = width;
                 data.height = height;
 
-                // заполняем event для того чтобы передать в собственный callback
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ event пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ callback
                 EventWindowResize event(width, height);
                 data.eventCallbackFn(event);
             }
@@ -149,11 +149,11 @@ namespace SimpleEngine {
 
         glfwSetCursorPosCallback(window_,
             [](GLFWwindow* window, double x, double y) {
-                // кастим (void*) -> (WindowData*), и мы можем использовать 
-                // пользовательские данные вне window
+                // пїЅпїЅпїЅпїЅпїЅпїЅ (void*) -> (WindowData*), пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ window
                 WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-                // заполняем event для того чтобы передать в собственный callback
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ event пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ callback
                 EventMouseMoved event(x, y);
                 data.eventCallbackFn(event);
             }
@@ -161,11 +161,11 @@ namespace SimpleEngine {
 
         glfwSetWindowCloseCallback(window_,
             [](GLFWwindow* window) {
-                // кастим (void*) -> (WindowData*), и мы можем использовать 
-                // пользовательские данные вне window
+                // пїЅпїЅпїЅпїЅпїЅпїЅ (void*) -> (WindowData*), пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ window
                 WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
-                // заполняем event для того чтобы передать в собственный callback
+                // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ event пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ callback
                 EventWindowClose event;
                 data.eventCallbackFn(event);
             }        
@@ -178,21 +178,11 @@ namespace SimpleEngine {
         );
        
 
-        GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vs, 1, &vertex_shader, nullptr);
-        glCompileShader(vs);
-
-        GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fs, 1, &fragment_shader, nullptr);
-        glCompileShader(fs);
-
-        shader_program = glCreateProgram();
-        glAttachShader(shader_program, vs);
-        glAttachShader(shader_program, fs);
-        glLinkProgram(shader_program);
-
-        glDeleteShader(vs);
-        glDeleteShader(fs);
+        shaderProgram = std::make_unique<ShaderProgram>(vertex_shader, 
+                fragment_shader);
+        if (!shaderProgram->IsCompiled()) {
+            return false;
+        }
 
         GLuint points_vbo = 0;
         glGenBuffers(1, &points_vbo);

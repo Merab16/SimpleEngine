@@ -24,7 +24,7 @@ namespace SimpleEngine {
 
         eventDispatcher_.AddEventListener<EventMouseMoved>(
             [](EventMouseMoved& event) {
-                LOG_INFO("[MouseMoved] Mouse moved to {0}x{1}", event.x, event.y);
+                //LOG_INFO("[MouseMoved] Mouse moved to {0}x{1}", event.x, event.y);
             }
         );
 
@@ -53,8 +53,8 @@ namespace SimpleEngine {
             OnUpdate();
         }
 
-        window_ = nullptr;      // в туториале говорится, что нужно занулить *GLFWwindow
-                                // и тогда вызывается деструктор. очень странно???????
+        window_ = nullptr;      // пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ *GLFWwindow
+                                // пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ???????
 
 
         return 0;

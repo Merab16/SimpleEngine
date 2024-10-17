@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <functional>
+#include <memory>
 
 
 #include "SimpleEngineCore/Event.h"
@@ -24,6 +25,7 @@ namespace SimpleEngine {
     private:
         GLFWwindow* window_ = nullptr;
         WindowData data_;
+
         float backgroundColor_[4]{ 0, 0.5, 0.5, 0 };
         
 

@@ -2,6 +2,8 @@
 
 #include <spdlog/spdlog.h>
 
+#define DEBUG
+
 
 namespace SimpleEngine {
 
