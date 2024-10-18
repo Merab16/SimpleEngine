@@ -55,9 +55,6 @@ namespace SimpleEngine {
     };
 
 
-
-
-
     class VertexBuffer {
     private:
         unsigned int id_ = 0;

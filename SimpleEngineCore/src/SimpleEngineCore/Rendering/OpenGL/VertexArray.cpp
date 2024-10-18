@@ -1,5 +1,3 @@
-#pragma once
-
 #include <glad/glad.h>
 
 
@@ -36,15 +34,7 @@ namespace SimpleEngine {
 	}
 
 	// public
-	void VertexArray::Bind() const {
-		glBindVertexArray(id_);
-	}
-
-	void VertexArray::Unbind() {
-		glBindVertexArray(0);
-	}
-
-	void VertexArray::AddBuffer(const VertexBuffer& vertex_buffer) {
+	void VertexArray::AddVertexBuffer(const VertexBuffer& vertex_buffer) {
 		Bind();
 		vertex_buffer.Bind();
 
@@ -63,6 +53,23 @@ namespace SimpleEngine {
 		
 	}
 
+	void VertexArray::SetIndexBuffer(const IndexBuffer& index_buffer) {
+		Bind();
+		index_buffer.Bind();
+		indicesCount_ = index_buffer.GetCount();
+	}
+
+
+
+	void VertexArray::Bind() const {
+		glBindVertexArray(id_);
+	}
+
+	void VertexArray::Unbind() {
+		glBindVertexArray(0);
+	}
+
+	
 
 
 
