@@ -12,6 +12,7 @@
 #include "SimpleEngineCore/Rendering/OpenGL/VertexArray.h"
 #include "SimpleEngineCore/Rendering/OpenGL/IndexBuffer.h"
 
+#include <glm/mat3x3.hpp>
 
 namespace SimpleEngine {
     static bool isGLFWinitialized = false;
@@ -34,9 +35,9 @@ namespace SimpleEngine {
 
     GLfloat positions_and_colors_rectangle1[] = {
         -0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 0.0f,
-        0.5f, -0.5f, 0.0f,      0.0f, 1.0f, 1.0f,
-        -0.5f, 0.5f, 0.0f,      1.0f, 0.0f, 1.0f,
-        0.5f, 0.5f, 0.0f,       1.0f, 0.0f, 0.0f
+        0.5f, -0.5f, 0.0f,      0.1f, 0.4f, 1.0f,
+        -0.5f, 0.5f, 0.0f,      1.0f, 0.0f, 0.4f,
+        0.5f, 0.5f, 0.0f,       0.3f, 0.0f, 0.7f
     };
 
     GLuint indices[] = {
@@ -224,7 +225,15 @@ namespace SimpleEngine {
         vao_one_buffer->SetIndexBuffer(*indexBuffer);
        
 
+        glm::mat3 mat_1(4, 0, 0, 2, 8, 1, 0, 1, 0);
+        glm::mat3 mat_2(4, 2, 9, 2, 0, 4, 1, 4, 2);
 
+        glm::mat3 res_mat = mat_1 * mat_2;
+        LOG_INFO("");
+        LOG_INFO("|{0:3} {1:3} {2:3}|", res_mat[0][0], res_mat[1][0], res_mat[2][0]);
+        LOG_INFO("|{0:3} {1:3} {2:3}|", res_mat[0][1], res_mat[1][1], res_mat[2][1]);
+        LOG_INFO("|{0:3} {1:3} {2:3}|", res_mat[0][2], res_mat[1][2], res_mat[2][2]);
+        LOG_INFO("");
 
         return 0;
 	}
