@@ -14,6 +14,7 @@ set(ENGINE_PRIVATE_INCLUDES
 	src/SimpleEngineCore/Rendering/OpenGL/VertexBuffer.h
 	src/SimpleEngineCore/Rendering/OpenGL/VertexArray.h
 	src/SimpleEngineCore/Rendering/OpenGL/IndexBuffer.h
+	src/SimpleEngineCore/Camera.h
 )
 
 set(ENGINE_PRIVATE_SOURCES
@@ -23,6 +24,7 @@ set(ENGINE_PRIVATE_SOURCES
 	src/SimpleEngineCore/Rendering/OpenGL/VertexBuffer.cpp
 	src/SimpleEngineCore/Rendering/OpenGL/VertexArray.cpp
 	src/SimpleEngineCore/Rendering/OpenGL/IndexBuffer.cpp
+	src/SimpleEngineCore/Camera.cpp
 )
 
 set(ENGINE_ALL_SOURCES

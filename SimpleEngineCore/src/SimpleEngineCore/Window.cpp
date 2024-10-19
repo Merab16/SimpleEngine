@@ -5,14 +5,17 @@
 #include <imgui/backends/imgui_impl_opengl3.h>
 #include <imgui/backends/imgui_impl_glfw.h>
 
+#include <glm/mat3x3.hpp>
+#include <glm/trigonometric.hpp>
+
 #include "SimpleEngineCore/Window.h"
 #include "SimpleEngineCore/Log.h"
 #include "SimpleEngineCore/Rendering/OpenGL/ShaderProgram.h"
 #include "SimpleEngineCore/Rendering/OpenGL/VertexBuffer.h"
 #include "SimpleEngineCore/Rendering/OpenGL/VertexArray.h"
 #include "SimpleEngineCore/Rendering/OpenGL/IndexBuffer.h"
+#include "Camera.h"
 
-#include <glm/mat3x3.hpp>
 
 namespace SimpleEngine {
     static bool isGLFWinitialized = false;
@@ -44,14 +47,18 @@ namespace SimpleEngine {
         0, 1, 2, 3, 2, 1
     };
 
+    
+
      const char* vertex_shader = 
          "#version 450\n"
          "layout(location = 0) in vec3 vertex_position;"
          "layout(location = 1) in vec3 vertex_color;"
+         "uniform mat4 model_matrix;"
+         "uniform mat4 view_projection_matrix;"
          "out vec3 color;"
          "void main() {"
          "  color = vertex_color;"
-         "  gl_Position = vec4(vertex_position, 1.f);"
+         "  gl_Position = view_projection_matrix *  model_matrix * vec4(vertex_position, 1.f);"
          "}";
      const char* fragment_shader =
          "#version 460\n"
@@ -65,6 +72,14 @@ namespace SimpleEngine {
     std::unique_ptr<IndexBuffer> indexBuffer;
     std::unique_ptr<VertexBuffer> positions_and_colors_vbo;
     std::unique_ptr<VertexArray> vao_one_buffer;
+    float scale[] = { 1, 1, 1 };
+    float rotate = 0.f;
+    float translate[] = { 0.f, 0.f, 0.f };
+
+    float camera_position[3] = { 0.f, 0.f, 1.f };
+    float camera_rotation[3] = { 0.f, 0.f, 0.f };
+    bool perspective_camera = false;
+    Camera camera;
 
 	// constr & destr
 	Window::Window(unsigned int width, unsigned int height, const std::string& title)
@@ -104,11 +119,49 @@ namespace SimpleEngine {
 
         ImGui::Begin("Background Color Window");
         ImGui::ColorEdit4("Background color", backgroundColor_);
+        ImGui::SliderFloat3("scale", scale, 0.f, 2.f);
+        ImGui::SliderFloat("rotate", &rotate, 0.f, 360.f);
+        ImGui::SliderFloat3("translate", translate, -1.f, 1.f);
 
-        
+        ImGui::SliderFloat3("camera position", camera_position, -10.f, 10.f);
+        ImGui::SliderFloat3("camera rotation", camera_rotation, 0.f, 360.f);
+        ImGui::Checkbox("Perspective camera", &perspective_camera);
+
+
         shaderProgram->Bind();
+
+        glm::mat4 scale_matrix(scale[0],    0,          0,          0,
+                               0,           scale[1],   0,          0,
+                               0,           0,          scale[2],   0,
+                               0,           0,          0,          1
+            );
+
+        float rotate_in_radian = glm::radians(rotate);
+        glm::mat4 rotate_matrix(cos(rotate_in_radian),  sin(rotate_in_radian),  0, 0,
+                                -sin(rotate_in_radian), cos(rotate_in_radian),  0, 0,
+                                0,                      0,                      1, 0,
+                                0,                      0,                      0, 1
+        );
+
+        glm::mat4 translate_matrix(
+            1,              0,              0,              0,
+            0,              1,              0,              0,
+            0,              0,              1,              0,
+            translate[0],   translate[1],   translate[2],   1
+        );
+
+        glm::mat4 model_matrix = translate_matrix * rotate_matrix * scale_matrix;
+        shaderProgram->SetMatrix4("model_matrix", model_matrix);
+
+        camera.SetPositionRotation(glm::vec3(camera_position[0], camera_position[1], camera_position[2]),
+                                    glm::vec3(camera_rotation[0], camera_rotation[1], camera_rotation[2]));
+        camera.SetProjectionMode(
+            perspective_camera ? Camera::ProjectionMode::Perspective : Camera::ProjectionMode::Orthographic
+        );
+
+        shaderProgram->SetMatrix4("view_projection_matrix", camera.GetProjectionMatrix() * camera.GetViewMatrix());
+
         vao_one_buffer->Bind();
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
         glDrawElements(GL_TRIANGLES, vao_one_buffer->GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
 
 

@@ -1,8 +1,12 @@
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <string>
+
+
 
 #include "ShaderProgram.h"
 #include "SimpleEngineCore/Log.h"
+
 
 namespace SimpleEngine {
     bool CreateShader(const char* source, const GLenum shader_type,
@@ -114,6 +118,9 @@ namespace SimpleEngine {
         glUseProgram(0);
     }
 
+    void ShaderProgram::SetMatrix4(const char* name, const glm::mat4& matrix) const {
+        glUniformMatrix4fv(glGetUniformLocation(id_, name), 1, GL_FALSE, glm::value_ptr(matrix)); 
+    }
 
 
 

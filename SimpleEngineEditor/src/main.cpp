@@ -18,7 +18,7 @@ int main()
 {
     auto myApp = std::make_unique<MyApp>();
 
-    int returnCode = myApp->Start(800, 600, "My first App");
+    int returnCode = myApp->Start(1600, 900, "My first App");
 
     std::cin.get();
 

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <glm/mat4x4.hpp>
+
+
 namespace SimpleEngine {
     class ShaderProgram {
     private:
@@ -25,7 +28,7 @@ namespace SimpleEngine {
         void Bind() const;
         static void Unbind();
         bool IsCompiled() const { return isCompiled_; }
-
+        void SetMatrix4(const char* name, const glm::mat4& matrix) const;
 
 
     };
