@@ -89,7 +89,7 @@ namespace SimpleEngine {
     }
 
     // move constr && move operator= 
-    ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) {
+    ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept {
         glDeleteProgram(id_);
         id_ = other.id_;
         isCompiled_ = other.isCompiled_;
@@ -100,7 +100,7 @@ namespace SimpleEngine {
         return *this;
     }
 
-    ShaderProgram::ShaderProgram(ShaderProgram&& other) {
+    ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept {
         id_ = other.id_;
         isCompiled_ = other.isCompiled_;
 

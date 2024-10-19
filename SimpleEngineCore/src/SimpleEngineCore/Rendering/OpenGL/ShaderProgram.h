@@ -17,8 +17,8 @@ namespace SimpleEngine {
         ShaderProgram(const char* vertex_shader_src,
                     const char* fragment_shader_src);
 
-        ShaderProgram(ShaderProgram&&);
-        ShaderProgram& operator= (ShaderProgram&&);
+        ShaderProgram(ShaderProgram&&) noexcept;
+        ShaderProgram& operator= (ShaderProgram&&) noexcept;
         ~ShaderProgram();
 
         ShaderProgram() = delete;
