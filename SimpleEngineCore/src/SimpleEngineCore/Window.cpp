@@ -17,7 +17,7 @@
 #include "SimpleEngineCore/Rendering/OpenGL/VertexArray.h"
 #include "SimpleEngineCore/Rendering/OpenGL/IndexBuffer.h"
 #include "SimpleEngineCore/Rendering/OpenGL/Renderer_OpenGL.h"
-
+#include "SimpleEngineCore/Modules/UIModule.h"
 
 namespace SimpleEngine {
     GLfloat positions_and_colors[] = {
@@ -88,11 +88,8 @@ namespace SimpleEngine {
 	{
 		
 		int res = Init();
-
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-        ImGui_ImplGlfw_InitForOpenGL(window_, true);
-        ImGui_ImplOpenGL3_Init();
+        
+        
        
 	}
 	Window::~Window() {
@@ -106,18 +103,16 @@ namespace SimpleEngine {
         Renderer_OpenGL::Clear();
 
         
+        UIModule::OnWindowUpdateBegin();
 
+        bool show = true;
+        UIModule::ShowExampleAppDockSpace(&show);
 
+        
 
-        ImGuiIO& io = ImGui::GetIO();
-        io.DisplaySize.x = data_.width;
-        io.DisplaySize.y = data_.height;
+        
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
 
         ImGui::Begin("Background Color Window");
         ImGui::ColorEdit4("Background color", backgroundColor_);
@@ -128,7 +123,7 @@ namespace SimpleEngine {
         ImGui::SliderFloat3("camera position", camera_position, -10.f, 10.f);
         ImGui::SliderFloat3("camera rotation", camera_rotation, 0.f, 360.f);
         ImGui::Checkbox("Perspective camera", &perspective_camera);
-
+        ImGui::End();
 
         shaderProgram->Bind();
 
@@ -165,11 +160,10 @@ namespace SimpleEngine {
 
         Renderer_OpenGL::Draw(*vao_one_buffer);
 
-        ImGui::End();
+        
 
 
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        UIModule::OnWindowUpdateDraw();
 
 
 
@@ -257,6 +251,9 @@ namespace SimpleEngine {
             }
         );
        
+        UIModule::OnWindowCreate(window_);
+
+
 
         shaderProgram = std::make_unique<ShaderProgram>(vertex_shader, 
                 fragment_shader);
@@ -282,13 +279,7 @@ namespace SimpleEngine {
 	}
 
 	void Window::Shutdown() {
-        if (ImGui::GetCurrentContext()) {
-            ImGui_ImplOpenGL3_Shutdown();
-            ImGui_ImplGlfw_Shutdown();
-            ImGui::DestroyContext();
-        }
-        
-
+        UIModule::OnWindowClose();
         glfwDestroyWindow(window_);
         glfwTerminate();
 
