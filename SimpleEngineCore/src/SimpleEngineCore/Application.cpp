@@ -9,7 +9,7 @@
 #include "SimpleEngineCore/Application.h"
 #include "SimpleEngineCore/Window.h"
 #include "SimpleEngineCore/Log.h"
-
+#include "SimpleEngineCore/Input.h"
 
 #include "SimpleEngineCore/Rendering/OpenGL/ShaderProgram.h"
 #include "SimpleEngineCore/Rendering/OpenGL/VertexBuffer.h"
@@ -90,16 +90,6 @@ namespace SimpleEngine {
 
 
 
-
-
-
-
-
-
-
-
-
-
     Application::Application() {
         LOG_INFO("Starting Application");
     }
@@ -128,6 +118,32 @@ namespace SimpleEngine {
             [&](EventWindowClose& event) {
                 LOG_INFO("[Close] Window close");
                 isCloseWindow_ = true;
+            }
+        );
+
+        eventDispatcher_.AddEventListener<EventKeyPressed>(
+            [&](EventKeyPressed& event) {
+                if (event.keyCode < KeyCode::KEY_Z) {
+                    if (event.repeated) {
+                        LOG_INFO("[Key pressed] {0}, repeated", 
+                            static_cast<char>(event.keyCode));
+                    }
+                    else {
+                        LOG_INFO("[Key pressed] {0}", 
+                            static_cast<char>(event.keyCode));
+                    }
+                }
+                Input::PressKey(event.keyCode);
+            }
+        );
+
+        eventDispatcher_.AddEventListener<EventKeyReleased>(
+            [&](EventKeyReleased& event) {
+                if (event.keyCode < KeyCode::KEY_Z) {
+                    LOG_INFO("[Key released] {0}", 
+                        static_cast<char>(event.keyCode));
+                }
+                Input::ReleaseKey(event.keyCode);
             }
         );
 

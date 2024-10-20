@@ -108,6 +108,33 @@ namespace SimpleEngine {
             }
         );
        
+        glfwSetKeyCallback(window_,
+            [](GLFWwindow* window, int key, int scan_code, int action, int mods) {
+                WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+                switch (action) {
+                case GLFW_PRESS:
+                {
+                    EventKeyPressed event(static_cast<KeyCode>(key), false);
+                    data.eventCallbackFn(event);
+                    break;
+                }
+                case GLFW_RELEASE:
+                {
+                    EventKeyReleased event(static_cast<KeyCode>(key));
+                    data.eventCallbackFn(event);
+                    break;
+                }
+                case GLFW_REPEAT:
+                {
+                    LOG_INFO("GLFW_REPEAT {0}", char(key));
+                    break;
+                }
+                }
+            }
+        );
+
+
+
         UIModule::OnWindowCreate(window_);       
 
         return 0;

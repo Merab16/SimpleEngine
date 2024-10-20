@@ -2,6 +2,8 @@
 #include <functional>
 #include <array>
 
+#include "Keys.h"
+
 namespace SimpleEngine {
 
 	enum class EventType {
@@ -102,6 +104,42 @@ namespace SimpleEngine {
 	public:
 		EventWindowClose() = default;
 		virtual ~EventWindowClose() = default;
+
+		virtual EventType GetType() const override { return type; }
+	};
+
+	//=========== EventKeyPressed ===========//
+	struct EventKeyPressed : public BaseEvent {
+	public:
+		static const EventType type = EventType::KeyPressed;
+		KeyCode keyCode;
+		bool repeated;
+		 
+	public:
+		EventKeyPressed(KeyCode key_code, bool repeated)
+			: keyCode(key_code)
+			, repeated(repeated)
+		{
+
+		}
+		virtual ~EventKeyPressed() = default;
+
+		virtual EventType GetType() const override { return type; }
+	};
+
+	//=========== EventKeyReleased ===========//
+	struct EventKeyReleased : public BaseEvent {
+	public:
+		static const EventType type = EventType::KeyReleased;
+		KeyCode keyCode;
+
+	public:
+		EventKeyReleased(KeyCode key_code)
+			: keyCode(key_code)
+		{
+
+		}
+		virtual ~EventKeyReleased() = default;
 
 		virtual EventType GetType() const override { return type; }
 	};

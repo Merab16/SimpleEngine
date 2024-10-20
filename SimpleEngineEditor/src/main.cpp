@@ -4,16 +4,47 @@
 #include <SimpleEngineCore/Application.h>
 #include <imgui/imgui.h>
 
+#include "SimpleEngineCore/Input.h"
+
 
 class SimpleEnigneEditor : public SimpleEngine::Application
 {
     virtual void OnUpdate() override
     {
-    //    std::cout << "Update frame: " << frame++ << std::endl;
+        if (SimpleEngine::Input::IsKeyPressed(SimpleEngine::KeyCode::KEY_W)) {
+            camera_position[2] -= 0.01f;
+        }
+        if (SimpleEngine::Input::IsKeyPressed(SimpleEngine::KeyCode::KEY_S)) {
+            camera_position[2] += 0.01f;
+        }
+        if (SimpleEngine::Input::IsKeyPressed(SimpleEngine::KeyCode::KEY_A)) {
+            camera_position[0] -= 0.01f;
+        }
+        if (SimpleEngine::Input::IsKeyPressed(SimpleEngine::KeyCode::KEY_D)) {
+            camera_position[0] += 0.01f;
+        }
+        if (SimpleEngine::Input::IsKeyPressed(SimpleEngine::KeyCode::KEY_E)) {
+            camera_position[1] += 0.01f;
+        }
+        if (SimpleEngine::Input::IsKeyPressed(SimpleEngine::KeyCode::KEY_Q)) {
+            camera_position[1] -= 0.01f;
+        }
+        if (SimpleEngine::Input::IsKeyPressed(SimpleEngine::KeyCode::KEY_UP)) {
+            camera_rotation[0] += 0.5f;
+        }
+        if (SimpleEngine::Input::IsKeyPressed(SimpleEngine::KeyCode::KEY_DOWN)) {
+            camera_rotation[0] -= 0.5f;
+        }
+        if (SimpleEngine::Input::IsKeyPressed(SimpleEngine::KeyCode::KEY_RIGHT)) {
+            camera_rotation[1] -= 0.5f;
+        }
+        if (SimpleEngine::Input::IsKeyPressed(SimpleEngine::KeyCode::KEY_LEFT)) {
+            camera_rotation[1] += 0.5f;
+        }
     }
 
     virtual void OnUIDraw() override {
-        ImGui::Begin("Camera UI");
+        ImGui::Begin("Editor UI");
         ImGui::SliderFloat3("camera position", camera_position, -10.f, 10.f);
         ImGui::SliderFloat3("camera rotation", camera_rotation, 0.f, 360.f);
         ImGui::Checkbox("Perspective camera", &perspective_camera);
