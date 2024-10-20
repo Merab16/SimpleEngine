@@ -1,6 +1,8 @@
 #include <glm/trigonometric.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
-#include "Camera.h"
+
+#include "SimpleEngineCore/Camera.h"
 
 
 namespace SimpleEngine {
@@ -22,40 +24,39 @@ namespace SimpleEngine {
 	// private
 	void Camera::UpdateViewMatrix() {
 
+		const float roll_in_radians		= glm::radians(rotation_.x);
+		const float pitch_in_radians	= glm::radians(rotation_.y);
+		const float yaw_in_radians		= glm::radians(rotation_.z);
 
-		float rotate_in_radian_x = glm::radians(-rotation_.x);
-		glm::mat4 rotate_matrix_x(
-			1, 0, 0, 0,
-			0, cos(rotate_in_radian_x), sin(rotate_in_radian_x), 0,
-			0, -sin(rotate_in_radian_x), cos(rotate_in_radian_x), 0,
-			0, 0, 0, 1
+
+		glm::mat3 rotate_matrix_x(
+			1, 0, 0,
+			0, cos(roll_in_radians), sin(roll_in_radians),
+			0, -sin(roll_in_radians), cos(roll_in_radians)
 		);
 		 
-		float rotate_in_radian_y = glm::radians(-rotation_.y);
-		glm::mat4 rotate_matrix_y(
-			cos(rotate_in_radian_y), 0, -sin(rotate_in_radian_y), 0,
-			0, 1, 0, 0,
-			sin(rotate_in_radian_y), 0, cos(rotate_in_radian_y), 0,
-			0, 0, 0, 1
+		glm::mat3 rotate_matrix_y(
+			cos(pitch_in_radians), 0, -sin(pitch_in_radians),
+			0, 1, 0,
+			sin(pitch_in_radians), 0, cos(pitch_in_radians)
 		);
 
-		float rotate_in_radian_z = glm::radians(-rotation_.z);
-		glm::mat4 rotate_matrix_z(
-			cos(rotate_in_radian_z), sin(rotate_in_radian_z), 0, 0,
-			-sin(rotate_in_radian_z), cos(rotate_in_radian_z), 0, 0,
-			0, 0, 1, 0,
-			0, 0, 0, 1
+		glm::mat3 rotate_matrix_z(
+			cos(yaw_in_radians), sin(yaw_in_radians), 0,
+			-sin(yaw_in_radians), cos(yaw_in_radians), 0,
+			0, 0, 1
 		);
 
+		const glm::mat3 euler_rotate_matrix =
+			rotate_matrix_z * rotate_matrix_y * rotate_matrix_x;
 
-		glm::mat4 translate_matrix(
-			1,				0,				0,				0,
-			0,				1,				0,				0,
-			0,				0,				1,				0,
-			-position_[0],	-position_[1],	-position_[2],	1
-			);
+		direction_ = glm::normalize(euler_rotate_matrix * worldForward_);
+		right_ = glm::normalize(euler_rotate_matrix * worldRight_);
+		up_ = glm::cross(right_, direction_);
 
-		viewMatrix_ = rotate_matrix_y * rotate_matrix_x * translate_matrix;
+
+
+		viewMatrix_ = glm::lookAt(position_, position_ + direction_, up_);
 	}
 
 	void Camera::UpdateProjectionMatrix() {
@@ -109,8 +110,29 @@ namespace SimpleEngine {
 		UpdateProjectionMatrix();
 	}
 
+	void Camera::MoveForward(float delta) {
+		position_ += direction_ * delta;
+		UpdateViewMatrix();
+	}
 
+	void Camera::MoveRight(float delta) {
+		position_ += right_ * delta;
+		UpdateViewMatrix();
+	}
 
+	void Camera::MoveUp(float delta) {
+		position_ += up_  * delta;
+		UpdateViewMatrix();
+	}
+
+	void Camera::AddMovementAndRotation(const glm::vec3& movement_delta,
+		const glm::vec3& rotation_delta) {
+		position_ += direction_ * movement_delta.x;
+		position_ += right_ * movement_delta.y;
+		position_ += up_ * movement_delta.z;
+		rotation_ += rotation_delta;
+		UpdateViewMatrix();
+	}
 
 
 }

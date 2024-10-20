@@ -48,10 +48,10 @@ namespace SimpleEngine {
     };
 
     GLfloat positions_and_colors_rectangle1[] = {
-        -0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 0.0f,
-        0.5f, -0.5f, 0.0f,      0.1f, 0.4f, 1.0f,
-        -0.5f, 0.5f, 0.0f,      1.0f, 0.0f, 0.4f,
-        0.5f, 0.5f, 0.0f,       0.3f, 0.0f, 0.7f
+        0.0f, -0.5f, -0.5f,      1.0f, 1.0f, 0.0f,
+        0.0f, 0.5f, -0.5f,       0.1f, 0.4f, 1.0f,
+        0.0f, -0.5f, 0.5f,       1.0f, 0.0f, 0.4f,
+        0.0f, 0.5f, 0.5f,        0.3f, 0.0f, 0.7f
     };
 
     GLuint indices[] = {
@@ -208,8 +208,6 @@ namespace SimpleEngine {
             glm::mat4 model_matrix = translate_matrix * rotate_matrix * scale_matrix;
             shaderProgram->SetMatrix4("model_matrix", model_matrix);
 
-            camera.SetPositionRotation(glm::vec3(camera_position[0], camera_position[1], camera_position[2]),
-                glm::vec3(camera_rotation[0], camera_rotation[1], camera_rotation[2]));
             camera.SetProjectionMode(
                 perspective_camera ? Camera::ProjectionMode::Perspective : Camera::ProjectionMode::Orthographic
             );

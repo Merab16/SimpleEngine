@@ -13,8 +13,8 @@ namespace SimpleEngine {
         EventDispatcher eventDispatcher_;
 
         bool isCloseWindow_ = false;
-        
-        
+
+
 
 
     private:
@@ -42,7 +42,7 @@ namespace SimpleEngine {
         float camera_position[3] = { 0.f, 0.f, 1.f };
         float camera_rotation[3] = { 0.f, 0.f, 0.f };
         bool perspective_camera = true;
-        Camera camera;
+        Camera camera{ glm::vec3(-5.f, 0.f, 0.f) };
 
 
 
