@@ -15,8 +15,8 @@ namespace SimpleEngine {
 	public:
 		static void OnWindowCreate(GLFWwindow* window);
 		static void OnWindowClose();
-		static void OnWindowUpdateBegin();
-		static void OnWindowUpdateDraw();
+		static void OnUIDrawBegin();
+		static void OnUIDrawEnd();
 		static void ShowExampleAppDockSpace(bool* p_open);
 	};
 

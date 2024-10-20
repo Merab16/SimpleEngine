@@ -30,13 +30,13 @@ namespace SimpleEngine {
 		ImGui::DestroyContext();
 	}
 
-	void UIModule::OnWindowUpdateBegin() {
+	void UIModule::OnUIDrawBegin() {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 	}
 
-	void UIModule::OnWindowUpdateDraw() {
+	void UIModule::OnUIDrawEnd() {
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

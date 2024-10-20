@@ -6,6 +6,7 @@ set(ENGINE_PUBLIC_INCLUDES
 	includes/SimpleEngineCore/Application.h
 	includes/SimpleEngineCore/Log.h
 	includes/SimpleEngineCore/Event.h
+	includes/SimpleEngineCore/Camera.h
 )
 
 set(ENGINE_PRIVATE_INCLUDES
@@ -14,7 +15,6 @@ set(ENGINE_PRIVATE_INCLUDES
 	src/SimpleEngineCore/Rendering/OpenGL/VertexBuffer.h
 	src/SimpleEngineCore/Rendering/OpenGL/VertexArray.h
 	src/SimpleEngineCore/Rendering/OpenGL/IndexBuffer.h
-	src/SimpleEngineCore/Camera.h
 	src/SimpleEngineCore/Rendering/OpenGL/Renderer_OpenGL.h
 	src/SimpleEngineCore/Modules/UIModule.h
 )

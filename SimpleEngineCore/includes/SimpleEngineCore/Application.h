@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
 
-#include <SimpleEngineCore/Event.h>
-
+#include "SimpleEngineCore/Event.h"
+#include "SimpleEngineCore/Camera.h"
 
 
 namespace SimpleEngine {
@@ -13,6 +13,9 @@ namespace SimpleEngine {
         EventDispatcher eventDispatcher_;
 
         bool isCloseWindow_ = false;
+        
+        
+
 
     private:
 
@@ -30,6 +33,18 @@ namespace SimpleEngine {
         virtual int Start(unsigned int window_width, unsigned int window_height, const char* title);
 
         virtual void OnUpdate() {}
+        virtual void OnUIDraw() {}
+
+
+
+
+
+        float camera_position[3] = { 0.f, 0.f, 1.f };
+        float camera_rotation[3] = { 0.f, 0.f, 0.f };
+        bool perspective_camera = false;
+        Camera camera;
+
+
 
     };
 
